@@ -6,7 +6,7 @@ Requires the latest version of AFBase: https://github.com/Zode/AFBase
 ***
 
 AFBaseExpansions\amxports\amxports.as
-is required by all plugins!
+is required by most plugins!
 
 Check the wiki for information about the plugins.
 
