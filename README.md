@@ -16,7 +16,7 @@ Check the wiki for information about the plugins.
 
 > .admin_show_activity (1|2|3)
 
-> as_command .admin-show-activity 1
+> as_command .admin-show-activity (1|2|3)
 
 Used by some plugins when displaying plugin activity.
 
