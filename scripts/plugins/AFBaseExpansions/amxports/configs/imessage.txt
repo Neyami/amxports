@@ -1,0 +1,2 @@
+Welcome to §hostname§ 000255100
+This server is using AFBase^nVisit https://github.com/Zode/AFBase 000100255
