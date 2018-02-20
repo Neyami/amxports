@@ -10,10 +10,14 @@ is required by most plugins!
 
 Check the wiki for information about the plugins.
 
-The following plugins are incomplete, but have basic functions (the most used ones)
+The following plugins are incomplete, but have basic functions (the most used ones).
 * adminchat
 * plugin_teleport
 * dynamic_glows
+
+
+The following plugins have been completed, but haven't been tested in a live environment. (but should work properly)
+* adminslots
 
 ***
 
