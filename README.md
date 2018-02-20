@@ -15,6 +15,7 @@ Check the wiki for information about the plugins.
 # General Commands
 
 > .admin_show_activity (1|2|3)
+
 > as_command .admin-show-activity 1
 
 Used by some plugins when displaying plugin activity.
