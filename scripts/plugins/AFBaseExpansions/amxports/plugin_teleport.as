@@ -179,7 +179,7 @@ namespace AMXTeleport
 {
 	CScheduledFunction@ g_pCheckStuck = null;
 	array<Vector> g_vecSlots(NUMSLOTS);
-	string g_NoTeleportFile = "scripts/plugins/AFBaseExpansions/noteleport.txt";
+	string g_NoTeleportFile = "scripts/plugins/AFBaseExpansions/amxports/configs/plugin_teleport/noteleport.txt";
 
 	HookReturnCode ClientPutInServer( CBasePlayer@ pPlayer )
 	{
@@ -195,16 +195,16 @@ namespace AMXTeleport
 	{
 		File@ file = g_FileSystem.OpenFile(g_NoTeleportFile, OpenFile::READ);
 
-		if( file !is null && file.IsOpen() )
+		if( file !is null and file.IsOpen() )
 		{
 			while( !file.EOFReached() )
 			{
 				string sLine;
 				file.ReadLine( sLine );
-				if( sLine.SubString(sLine.Length()-1,1) == " " || sLine.SubString(sLine.Length()-1,1) == "\n" || sLine.SubString(sLine.Length()-1,1) == "\r" || sLine.SubString(sLine.Length()-1,1) == "\t" )
+				if( sLine.SubString(sLine.Length()-1,1) == " " or sLine.SubString(sLine.Length()-1,1) == "\n" or sLine.SubString(sLine.Length()-1,1) == "\r" or sLine.SubString(sLine.Length()-1,1) == "\t" )
 					sLine = sLine.SubString( 0, sLine.Length()-1 );
 
-				if( sLine.SubString(0,1) == "#" || sLine.IsEmpty() )
+				if( sLine.SubString(0,1) == "#" or sLine.IsEmpty() )
 					continue;
 
 				g_DisabledMaps.insertLast(sLine);
@@ -246,7 +246,7 @@ namespace AMXTeleport
 				FVecIVec(angles, iangles)
 				for (i=0; i<NUMSLOTS; i++)
 				{
-					if( g_vecSlots[i][0] == -1 && g_vecSlots[i][1] == -1 && g_vecSlots[i][2] == -1 )
+					if( g_vecSlots[i][0] == -1 and g_vecSlots[i][1] == -1 and g_vecSlots[i][2] == -1 )
 					{
 						g_vecSlots[i][0] = origin[0]
 						g_vecSlots[i][1] = origin[1]
@@ -353,7 +353,7 @@ namespace AMXTeleport
 
 				id = pTarget.entindex();
 
-				if( args.GetString(1) == "on" || args.GetString(1) == "1" )
+				if( args.GetString(1) == "on" or args.GetString(1) == "1" )
 				{
 					g_bPlayerAllowed[id] = true;
 					amxteleport.Tell( "Player " + pTarget.pev.netname + " can now teleport himself.", pAdmin, HUD_PRINTCONSOLE );
@@ -420,7 +420,7 @@ namespace AMXTeleport
 
 		if( !PlayerAllowedToPos(pPlayer) ) return;
 
-		if( g_vecUserSlot[id].x != -1 || g_vecUserSlot[id].y != -1 || g_vecUserSlot[id].z != -1 )
+		if( g_vecUserSlot[id].x != -1 or g_vecUserSlot[id].y != -1 or g_vecUserSlot[id].z != -1 )
 		{
 			pPlayer.pev.velocity = g_vecZero;
 			pPlayer.pev.flFallVelocity = 0.0f;
@@ -443,7 +443,7 @@ namespace AMXTeleport
 
 		if( !PlayerAllowedToPos(pPlayer) ) return;
 
-		if( g_vecUserSlot2[id].x != -1 || g_vecUserSlot2[id].y != -1 || g_vecUserSlot2[id].z != -1 )
+		if( g_vecUserSlot2[id].x != -1 or g_vecUserSlot2[id].y != -1 or g_vecUserSlot2[id].z != -1 )
 		{
 			pPlayer.pev.velocity = g_vecZero;
 			pPlayer.pev.flFallVelocity = 0.0f;
@@ -512,7 +512,7 @@ namespace AMXTeleport
 			return false;
 		}
 
-		if( !g_bPlayerAllowed[id] && g_PlayerFuncs.AdminLevel(pPlayer) < ADMIN_YES )
+		if( !g_bPlayerAllowed[id] and g_PlayerFuncs.AdminLevel(pPlayer) < ADMIN_YES )
 		{
 			amxteleport.Tell( "You are not allowed to teleport.", pPlayer, HUD_PRINTTALK );
 			return false;
@@ -524,14 +524,14 @@ namespace AMXTeleport
 			return false;
 		}
 /*Fuck this shit, just leaving it here for completion
-		if( pPlayer.pev.movetype == MOVETYPE_NOCLIP || pPlayer.pev.movetype == PLAYER_NOCLIP )
+		if( pPlayer.pev.movetype == MOVETYPE_NOCLIP or pPlayer.pev.movetype == PLAYER_NOCLIP )
 		{
 			amxteleport.Tell( "You cannot save while in noclip mode!", pPlayer, HUD_PRINTTALK );
 			return false;
 		}
 */
 		// only players with access ACCESS_TELEPORT can save position while spectator/dead.
-		if( /*!pPlayer.IsAlive() ||*/ pPlayer.GetObserver().IsObserver() )
+		if( /*!pPlayer.IsAlive() or*/ pPlayer.GetObserver().IsObserver() )
 		{
 			if( g_PlayerFuncs.AdminLevel(pPlayer) < ADMIN_YES )
 			{
@@ -629,11 +629,11 @@ namespace AMXTeleport
 			Vector(0.0, 0.0, 5.0), Vector(0.0, 0.0, -5.0), Vector(0.0, 5.0, 0.0), Vector(0.0, -5.0, 0.0), Vector(5.0, 0.0, 0.0), Vector(-5.0, 0.0, 0.0), Vector(-5.0, 5.0, 5.0), Vector(5.0, 5.0, 5.0), Vector(5.0, -5.0, 5.0), Vector(5.0, 5.0, -5.0), Vector(-5.0, -5.0, 5.0), Vector(5.0, -5.0, -5.0), Vector(-5.0, 5.0, -5.0), Vector(-5.0, -5.0, -5.0)
 		};
 
-		if( pPlayer.IsConnected() && pPlayer.IsAlive() )
+		if( pPlayer.IsConnected() and pPlayer.IsAlive() )
 		{
 			origin = pPlayer.pev.origin;
 			hull = pPlayer.pev.FlagBitSet(FL_DUCKING) ? head_hull : human_hull;
-			if( !is_hull_vacant(origin, hull, pPlayer) && pPlayer.pev.movetype != MOVETYPE_NOCLIP && pPlayer.pev.solid != SOLID_NOT )
+			if( !is_hull_vacant(origin, hull, pPlayer) and pPlayer.pev.movetype != MOVETYPE_NOCLIP and pPlayer.pev.solid != SOLID_NOT )
 			{
 				mins = pPlayer.pev.mins;
 				Vector vec;
@@ -678,7 +678,7 @@ namespace AMXTeleport
 		TraceResult tr;
 		g_Utility.TraceHull( origin, origin, ignore_monsters, hull, pPlayer.edict(), tr );//dont_ignore_monsters makes you bob up and down on placed corpses
 
-		if( tr.fStartSolid != 1 || tr.fAllSolid != 1 )
+		if( tr.fStartSolid != 1 or tr.fAllSolid != 1 )
 			return true;
 		
 		return false;
