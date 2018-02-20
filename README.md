@@ -10,6 +10,10 @@ is required by most plugins!
 
 Check the wiki for information about the plugins.
 
+The following plugins are incomplete, but have basic functions (the most used ones)
+* adminchat
+* plugin_teleport
+
 ***
 
 # General Commands
