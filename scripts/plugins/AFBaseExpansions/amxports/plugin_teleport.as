@@ -2,47 +2,6 @@
 * Teleportation commands, by bahrmanou © 2002-2006 e-mail: Amiga5707@hotmail.com
 * Ported to Angelscript and AFBase by Nero @ Svencoop Forums
 *****************************************************************************************/
-const string PLUGNAME = "plugin_teleport";
-const string VERSION = "2.0";
-
-const uint NUMSLOTS = 40;
-const int NUM_EFFECTS = g_effects.length();
-
-array<string> g_DisabledMaps;
-
-array<Vector2D> g_Stats(33);
-array<bool> g_bPlayerAllowed(33);
-array<Vector> g_vecUserSlot(33);
-array<Vector> g_vecUserSlot2(33);
-array<Vector> g_vecUserSlotAngle(33);
-array<Vector> g_vecUserSlotAngle2(33);
-array<float> g_flLastTime(33);
-
-bool bPosDelayStatus = true; // teleport delay is ON by default
-float flPosDelay = 2.0f; // delay = 2 secs
-
-CCVar@ g_bTeleport;
-CCVar@ g_iTeleportEffect;
-CCVar@ g_bUnstuck;
-
-const array<string> g_effects =
-{
-	"Random",
-	"Teleport",
-	"Sparks",
-	"Lavasplash",
-	"Explosion",
-	"Implosion",
-	"Light"
-};
-
-const array<string> g_tp_sounds =
-{
-	"items/r_item1.wav",
-	"items/r_item2.wav",
-	"items/health1.wav"
-};
-
 AMXTeleport amxteleport;
 
 void AMXTeleport_Call()
@@ -94,14 +53,14 @@ class AMXTeleport : AFBaseClass
 		RegisterCommand( "say /stats", "", "- displays checkpoint stats.", AFBase::ACCESS_Z, @AMXTeleport::cmdStats, false, true );
 		RegisterCommand( "say /teleport_version", "", "", AFBase::ACCESS_Z, @AMXTeleport::cmdVersion, false, true );
 
-		@g_bTeleport = CCVar( "amxtc_enabled", 1, "Enable/disable teleport plugin. (default: 1)", ConCommandFlag::AdminOnly );
-		@g_iTeleportEffect = CCVar( "amxtc_teleporteffect", 1, "Get/set teleporting effect (<0-6>, 0 = random). (default: 1)", ConCommandFlag::AdminOnly );
-		@g_bUnstuck = CCVar( "amxtc_autounstuck", 1, "Enable/disable auto-unstuck. (default: 1)", ConCommandFlag::AdminOnly );
+		@AMXTeleport::g_bTeleport = CCVar( "amxtc_enabled", 1, "Enable/disable teleport plugin. (default: 1)", ConCommandFlag::AdminOnly );
+		@AMXTeleport::g_iTeleportEffect = CCVar( "amxtc_teleporteffect", 1, "Get/set teleporting effect (<0-6>, 0 = random). (default: 1)", ConCommandFlag::AdminOnly );
+		@AMXTeleport::g_bUnstuck = CCVar( "amxtc_autounstuck", 1, "Enable/disable auto-unstuck. (default: 1)", ConCommandFlag::AdminOnly );
 
 		g_Hooks.RegisterHook( Hooks::Player::ClientPutInServer, @AMXTeleport::ClientPutInServer );
 
 		// empty and load list (if file exists) at map change automatically
-		for( uint i = 0; i < NUMSLOTS; i++ )
+		for( uint i = 0; i < AMXTeleport::NUMSLOTS; i++ )
 		{
 			//formatex(g_slot_name[i], MAX_TEXT_LENGTH, "pos%i", i+1)
 			AMXTeleport::g_vecSlots[i].x = AMXTeleport::g_vecSlots[i].y = AMXTeleport::g_vecSlots[i].z = -1;
@@ -125,18 +84,18 @@ class AMXTeleport : AFBaseClass
 
 	void MapInit()
 	{
-		g_DisabledMaps.resize(0);
+		AMXTeleport::g_DisabledMaps.resize(0);
 		AMXTeleport::ReadMapsFile();
 		//Aperture
-		g_bTeleport.SetInt(1);
+		AMXTeleport::g_bTeleport.SetInt(1);
 
 		//loop through the disabled map list
-		for( uint i = 0; i < g_DisabledMaps.length(); i++ )
+		for( uint i = 0; i < AMXTeleport::g_DisabledMaps.length(); i++ )
 		{
-			if( g_Engine.mapname == g_DisabledMaps[i] )
+			if( g_Engine.mapname == AMXTeleport::g_DisabledMaps[i] )
 			{
 				//g_Game.AlertMessage( at_logged, "[AMXTC] Disabled map detected!\n" );
-				g_bTeleport.SetInt(0);
+				AMXTeleport::g_bTeleport.SetInt(0);
 				break;
 			}
 		}
@@ -144,20 +103,20 @@ class AMXTeleport : AFBaseClass
 
 		//if( g_EngineFuncs.NumberOfEntities() < g_Engine.maxEntities - 15*g_Engine.maxClients - 2 )
 		for( uint i=0; i<3; i++ )
-			g_SoundSystem.PrecacheSound( g_tp_sounds[i] );
+			g_SoundSystem.PrecacheSound( AMXTeleport::g_tp_sounds[i] );
 	}
 
 	void ClientConnectEvent( CBasePlayer@ pPlayer )
 	{
 		int id = pPlayer.entindex();
 
-		g_bPlayerAllowed[id] = true;
-		g_vecUserSlot[id] = Vector(-1, -1, -1);
-		g_vecUserSlot2[id] = Vector(-1, -1, -1);
-		g_vecUserSlotAngle[id] = Vector(-1, -1, -1);
-		g_vecUserSlotAngle2[id] = Vector(-1, -1, -1);
-		g_flLastTime[id] = 0;
-		g_Stats[id].x = g_Stats[id].y = 0;
+		AMXTeleport::g_bPlayerAllowed[id] = true;
+		AMXTeleport::g_vecUserSlot[id] = Vector(-1, -1, -1);
+		AMXTeleport::g_vecUserSlot2[id] = Vector(-1, -1, -1);
+		AMXTeleport::g_vecUserSlotAngle[id] = Vector(-1, -1, -1);
+		AMXTeleport::g_vecUserSlotAngle2[id] = Vector(-1, -1, -1);
+		AMXTeleport::g_flLastTime[id] = 0;
+		AMXTeleport::g_Stats[id].x = AMXTeleport::g_Stats[id].y = 0;
 	}
 
 	void StopEvent()
@@ -177,6 +136,47 @@ class AMXTeleport : AFBaseClass
 
 namespace AMXTeleport
 {
+	const string PLUGNAME = "plugin_teleport";
+	const string VERSION = "2.0";
+
+	const uint NUMSLOTS = 40;
+	const int NUM_EFFECTS = g_effects.length();
+
+	array<string> g_DisabledMaps;
+
+	array<Vector2D> g_Stats(33);
+	array<bool> g_bPlayerAllowed(33);
+	array<Vector> g_vecUserSlot(33);
+	array<Vector> g_vecUserSlot2(33);
+	array<Vector> g_vecUserSlotAngle(33);
+	array<Vector> g_vecUserSlotAngle2(33);
+	array<float> g_flLastTime(33);
+
+	bool bPosDelayStatus = true; // teleport delay is ON by default
+	float flPosDelay = 2.0f; // delay = 2 secs
+
+	CCVar@ g_bTeleport;
+	CCVar@ g_iTeleportEffect;
+	CCVar@ g_bUnstuck;
+
+	const array<string> g_effects =
+	{
+		"Random",
+		"Teleport",
+		"Sparks",
+		"Lavasplash",
+		"Explosion",
+		"Implosion",
+		"Light"
+	};
+
+	const array<string> g_tp_sounds =
+	{
+		"items/r_item1.wav",
+		"items/r_item2.wav",
+		"items/health1.wav"
+	};
+
 	CScheduledFunction@ g_pCheckStuck = null;
 	array<Vector> g_vecSlots(NUMSLOTS);
 	string g_NoTeleportFile = "scripts/plugins/AFBaseExpansions/amxports/configs/plugin_teleport/noteleport.txt";
