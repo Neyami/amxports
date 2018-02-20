@@ -9,3 +9,16 @@ AFBaseExpansions\amxports\amxports.as
 is required by all plugins!
 
 Check the wiki for information about the plugins.
+
+***
+
+# General Commands
+
+> admin_show_activity (1|2|3)
+
+Used by some plugins when displaying plugin activity.
+
+* 1: hide admin name
+* 2: show admin name
+* 3: show name only to admins, hide to normal players.
+* (default: 1)
