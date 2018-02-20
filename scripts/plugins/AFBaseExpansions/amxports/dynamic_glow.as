@@ -69,7 +69,7 @@ const int MAXGLOWS = 3000; // hard coded limit on number of glows
 const int MAXGLOWLIST = 40; // DO NOT EDIT - defines max glows to list in motd window, more than 50 will overflow client!  This controls pagination
 const string VERSION = "1.3";
 const string LASTUPDATE = "January 07 2018";
-const string g_Filename = "scripts/plugins/AFBaseExpansions/amxports/glows.cfg"; // stores the location of the glows.cfg file
+const string g_Filename = "scripts/plugins/AFBaseExpansions/amxports/configs/glows.cfg";
 
 //new bool:g_safe_removal = true     // defines if removal means overwriting the glow or commenting it out
 int g_iTotalGlows = 0; // Stores how many glows have been read from glow.cfg
