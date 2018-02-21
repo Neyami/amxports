@@ -26,7 +26,7 @@ class AMXAntiFlood : AFBaseClass
 		// as_command .amx-flood-time 0.75
 
 		g_Hooks.RegisterHook( Hooks::Player::ClientSay, @AMXAntiFlood::ClientSay ); 
-		@AMXAntiFlood::cvar_flFloodTime = CCVar( "amx-flood-time", 0.75, "Set in seconds how fast players can chat (chat-flood protection) (default: 0.75)", ConCommandFlag::AdminOnly );
+		@AMXAntiFlood::cvar_flFloodTime = CCVar( "amx-flood-time", 0.75f, "Set in seconds how fast players can chat (chat-flood protection) (default: 0.75)", ConCommandFlag::AdminOnly );
 	}
 }
 
@@ -41,6 +41,8 @@ namespace AMXAntiFlood
 	HookReturnCode ClientSay( SayParameters@ pParams ) 
 	{
 		CBasePlayer@ pPlayer = pParams.GetPlayer(); 
+		AFBase::AFBaseUser@ AFBUser = cast<AFBase::AFBaseUser@>(AFBase::g_afbUserList[pPlayer.entindex()]);
+
 		float maxChat = cvar_flFloodTime.GetFloat();
 		string message = pParams.GetCommand();
 		int id = pPlayer.entindex();
@@ -48,7 +50,7 @@ namespace AMXAntiFlood
 		if( message.IsEmpty() )
 			return HOOK_CONTINUE;
 
-		if( maxChat > 0 and amxports.containi(message, "buy") == -1 and !AFBase::CheckAccess(pPlayer, ACCESS_B) )
+		if( maxChat > 0 and (amxports.containi(message, "buy") == -1 or amxports.containi(message, "buy") > 0) and AFBUser.iAccess < ACCESS_H )
 		{
 			float nexTime = g_Engine.time;
 
@@ -104,5 +106,11 @@ namespace AMXAntiFlood
 *	Date: 		January 11 2018
 *	-------------------------
 *	- First release
+*	-------------------------
+*
+*	Version: 	1.1
+*	Date: 		February 21 2018
+*	-------------------------
+*	- Fixed access-flags and an exploit allowing anyone to spam
 *	-------------------------
 */
