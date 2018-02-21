@@ -32,7 +32,7 @@ class AMXAntiFlood : AFBaseClass
 
 namespace AMXAntiFlood
 {
-	const string VERSION = "1.0";
+	const string VERSION = "1.1";
 	const string STOP_FLOOD = "Stop flooding the server!";
 	CCVar@ cvar_flFloodTime;
 	array<float> g_flFlooding(33);
