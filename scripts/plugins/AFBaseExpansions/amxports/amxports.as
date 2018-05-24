@@ -20,9 +20,9 @@ class AMXPorts : AFBaseClass
 		@AMXPorts::cvar_iAdminShowActivity = CCVar( "admin-show-activity", 1, "1: hide admin name, 2: show admin name, 3: show name only to admins, hide to normal players. (default: 1)", ConCommandFlag::AdminOnly );
 	}
 
-	int contain( string sSource, string sString )
+	int contain( string sSource, string sCompare )
 	{
-		uint uiTemp = sSource.Find(sString);
+		uint uiTemp = sSource.Find(sCompare);
 
 		if( uiTemp != Math.SIZE_MAX )
 			return int(uiTemp);
@@ -30,9 +30,9 @@ class AMXPorts : AFBaseClass
 		return -1;
 	}
 
-	int containi( string sSource, string sString )
+	int containi( string sSource, string sCompare )
 	{
-		uint uiTemp = sSource.ToLowercase().Find(sString.ToLowercase());
+		uint uiTemp = sSource.ToLowercase().Find(sCompare.ToLowercase());
 
 		if( uiTemp != Math.SIZE_MAX )
 			return int(uiTemp);
@@ -40,6 +40,38 @@ class AMXPorts : AFBaseClass
 		return -1;
 	}
 
+	int equal( string sSource, string sCompare, int len = 0 )
+	{
+		if( len > 0 )
+			return (sSource.SubString(0, len) == sCompare.SubString(0, len)) ? 1 : 0;
+
+		return (sSource == sCompare) ? 1 : 0;
+	}
+
+	int equali( string sSource, string sCompare, int len = 0 )
+	{
+		if( len > 0 )
+			return (sSource.ToLowercase().SubString(0, len) == sCompare.ToLowercase().SubString(0, len)) ? 1 : 0;
+
+		return (sSource.ToLowercase() == sCompare.ToLowercase()) ? 1 : 0;
+	}
+
+/*
+static cell AMX_NATIVE_CALL copyc(AMX *amx, cell *params) // 4 param 
+{
+	cell *src = get_amxaddr(amx, params[3]);
+	cell *dest = get_amxaddr(amx, params[1]);
+	cell *start = dest;
+	int c = params[2];
+	cell ch = params[4];
+	
+	while (c-- && *src && *src != ch)
+		*dest++ =* src++;
+	*dest = 0;
+	
+	return (dest - start);
+}
+*/
 	int get_timeleft()
 	{
 		float flCvarTimeLimit = g_EngineFuncs.CVarGetFloat("mp_timelimit");
@@ -383,6 +415,17 @@ class AMXPorts : AFBaseClass
 		origin = pos;
 	}
 
+	void get_user_name( int index, string &out userName )
+	{
+		CBasePlayer@ pPlayer = g_PlayerFuncs.FindPlayerByIndex(index);
+		const string hostname = g_EngineFuncs.CVarGetString("hostname");
+
+		if( pPlayer is null )
+			userName = hostname;
+		else
+			userName = (index < 1 or index > g_Engine.maxClients) ? hostname : string(pPlayer.pev.netname);
+	}
+
 	void velocity_by_aim( const int &in id, const float &in flVelocity, Vector &out vecOut )
 	{
 		CBaseEntity@ pEnt = null;
@@ -598,6 +641,16 @@ class AMXPorts : AFBaseClass
 		return false;
 	}
 
+	int is_user_alive( const int &in index )
+	{
+		if( index < 1 or index > g_Engine.maxClients )
+			return 0;
+
+		CBasePlayer@ pPlayer = g_PlayerFuncs.FindPlayerByIndex(index);
+
+		return ((pPlayer.IsConnected() and pPlayer.IsAlive()) ? 1 : 0); 
+	}
+
 	bool file_exists( const string &in sFile )
 	{
 		File@ file = g_FileSystem.OpenFile( sFile, OpenFile::READ );
@@ -607,11 +660,32 @@ class AMXPorts : AFBaseClass
 		file.Close();
 		return true;
 	}
+
+	void get_configsdir( string &out sOut )
+	{
+		sOut = AMXPorts::m_sConfigsDir;
+	}
+
+	void get_mapname( string &out sOut )
+	{
+		sOut = g_Engine.mapname;
+	}
+
+	float get_gametime()
+	{
+		return g_Engine.time;
+	}
+
+	int get_cvar_num( const string &in sCvar )
+	{
+		return int( g_EngineFuncs.CVarGetFloat(sCvar) );
+	}
 }
 
 namespace AMXPorts
 {
 	CCVar@ cvar_iAdminShowActivity;
+	const string m_sConfigsDir = "scripts/plugins/AFBaseExpansions/amxports/configs";
 
 	void PluginSettings( AFBaseArguments@ args )
 	{
@@ -643,3 +717,13 @@ namespace AMXPorts
 		}
 	}
 }
+
+/*
+*	Changelog
+*
+*	Version: 	1.0
+*	Date: 		May 03 2018
+*	-------------------------
+*	- First release
+*	-------------------------
+*/
