@@ -720,7 +720,8 @@ namespace AMXTeleport
 					return;
 				}
 
-				Vector angles = g_vecSlotAngle[slotnum-1];
+				Vector angles = g_vecZero;
+				angles = g_vecSlotAngle[slotnum-1];
 
 				pTarget.pev.velocity = g_vecZero;
 				g_EntityFuncs.SetOrigin( pTarget, g_vecSlot[slotnum-1] );
