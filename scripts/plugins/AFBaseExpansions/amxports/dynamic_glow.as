@@ -1140,7 +1140,7 @@ void DynamicGlowPostSpawn( int &in id )
 	string sFixId = AFBase::FormatSafe(AFBase::GetFixedSteamID(pPlayer));
 
 	GlowData@ pData = cast<GlowData@>(g_GlowColors[string(g_PlayerGlows[sFixId])]);
-	set_user_rendering( id, atoi(pData.sFx), atoi(pData.sRed), atoi(pData.sGreen), atoi(pData.sBlue), atoi(pData.sMode), atoi(pData.sAmount) );
+	amxports.set_user_rendering( id, atoi(pData.sFx), atoi(pData.sRed), atoi(pData.sGreen), atoi(pData.sBlue), atoi(pData.sMode), atoi(pData.sAmount) );
 }
 
 } //end of namespace DynamicGlow
