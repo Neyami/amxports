@@ -219,7 +219,7 @@ static cell AMX_NATIVE_CALL copyc(AMX *amx, cell *params) // 4 param
 		if( parsed.length() > 1 and parsed[0] != "mp3" )
 		{
 			cmd = parsed[0] + " \"";
-			for( uint i = 1; i < parsed.length; i++ )
+			for( uint i = 1; i < parsed.length(); i++ )
 			{
 				if( i > 1 ) cmd += " ";
 				cmd += parsed[i];
